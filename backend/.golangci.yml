@@ -1,0 +1,36 @@
+# golangci-lint v2 configuration for ScheduleSPbSTU backend
+version: "2"
+
+run:
+  timeout: 3m          # abort analysis if it takes longer than 3 minutes
+  tests: true          # lint *_test.go files too
+
+linters:
+  default: standard    # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - bodyclose        # unclosed HTTP response bodies (ruz client)
+    - noctx            # HTTP requests without context
+    - errorlint        # wrong error comparison / wrapping
+    - gosec            # security issues (G-rules)
+    - revive           # style and best practices
+    - gocyclo          # cyclomatic complexity
+  settings:
+    gocyclo:
+      min-complexity: 10   # functions more complex than this are reported
+    errcheck:
+      check-blank: false
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - gosec
+          - gocyclo
+
+formatters:
+  enable:
+    - gofmt            # standard formatting
+    - goimports        # sorted and unused imports
+
+issues:
+  max-issues-per-linter: 0   # show all issues, no limit
+  max-same-issues: 0

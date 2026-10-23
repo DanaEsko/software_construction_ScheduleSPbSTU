@@ -1,0 +1,49 @@
+# Taskfile for ScheduleSPbSTU: https://taskfile.dev
+version: "3"
+
+vars:
+  BACKEND_DIR: backend   # all Go commands run inside this directory
+
+tasks:
+  default:
+    desc: Show available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  build:
+    desc: Build the backend
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - go build ./...
+
+  test:
+    desc: Run unit tests
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - go test ./...
+
+  lint:verify:
+    desc: Validate the golangci-lint configuration file
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - golangci-lint config verify
+
+  lint:
+    desc: Run golangci-lint static analysis
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - golangci-lint run ./...
+
+  lint:fix:
+    desc: Run golangci-lint and auto-fix what it can
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - golangci-lint run --fix ./...
+
+  check:
+    desc: Full local check (config, lint, tests) - same as CI
+    cmds:
+      - task: lint:verify
+      - task: lint
+      - task: test

@@ -241,7 +241,7 @@ curl.exe -s "[https://ruz.spbstu.ru/api/v1/ruz/scheduler/45608?date=2026-10-05](
 (Get-Item ruz.json).Length
 ```
 
-![image.png](image.png)
+![image.png](images/image.png)
 
 | Неделя | Размер ответа |
 | --- | --- |
@@ -255,11 +255,11 @@ curl.exe -s "[https://ruz.spbstu.ru/api/v1/ruz/scheduler/45608?date=2026-10-05](
 
 #### Уровень 1 — Context
 
-![image.png](image%201.png)
+![image.png](images/image%201.png)
 
 #### Уровень 2 — Container
 
-![image.png](image%202.png)
+![image.png](images/image%202.png)
 
 ### 3.3 **Контракты API**
 
@@ -267,23 +267,23 @@ curl.exe -s "[https://ruz.spbstu.ru/api/v1/ruz/scheduler/45608?date=2026-10-05](
 
  Примеры запросов и ответов с различными кодами для регистрации нового пользователя в системе
 
-![image.png](image%203.png)
+![image.png](images/image%203.png)
 
-![image.png](image%204.png)
+![image.png](images/image%204.png)
 
 Примеры запросов и ответов с различными кодами для входа
 
-![image.png](image%205.png)
+![image.png](images/image%205.png)
 
-![image.png](image%206.png)
+![image.png](images/image%206.png)
 
-![image.png](image%207.png)
+![image.png](images/image%207.png)
 
-![image.png](image%208.png)
+![image.png](images/image%208.png)
 
-![image.png](image%209.png)
+![image.png](images/image%209.png)
 
-![image.png](image%2010.png)
+![image.png](images/image%2010.png)
 
 ### 3.4 **Проектирование данных**
 
@@ -312,7 +312,7 @@ curl.exe -s "[https://ruz.spbstu.ru/api/v1/ruz/scheduler/45608?date=2026-10-05](
 
 ### 3.5 **Масштабирование**
 
-![scaling_scheme.png](scaling_scheme.png)
+![scaling_scheme.png](images/scaling_scheme.png)
 
 | Проблема при ×10 | Решение |
 | --- | --- |

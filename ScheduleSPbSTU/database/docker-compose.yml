@@ -1,0 +1,25 @@
+# Отдельный запуск ТОЛЬКО базы данных (для разработки и проверки схемы).
+# Запуск из папки database/:   docker compose up -d
+services:
+  db:
+    image: postgres:16
+    container_name: schedule_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      # данные БД хранятся тут и переживают перезапуск контейнера
+      - pgdata:/var/lib/postgresql/data
+      # все .sql из этой папки выполняются автоматически при ПЕРВОМ создании БД
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

@@ -1,14 +1,9 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
-	"time"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var db *pgxpool.Pool // nil, пока база не подключена
@@ -98,8 +93,9 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", healthHandler)
 
+	port := getEnv("PORT", "8080")
 	handler := loggingMiddleware(corsMiddleware(mux))
 
-	log.Println("server started on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Printf("server started on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }

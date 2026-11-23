@@ -13,6 +13,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", healthHandler)
 	mux.HandleFunc("POST /auth/register", registerHandler)
+	mux.HandleFunc("POST /auth/login", loginHandler)
 
 	port := getEnv("PORT", "8080")
 	handler := loggingMiddleware(corsMiddleware(mux))

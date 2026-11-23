@@ -13,7 +13,7 @@ import (
 
 var db *pgxpool.Pool // nil, пока база не подключена
 
-// Логи (подзадача 8)
+// Логи
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -22,7 +22,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// CORS (подзадача 9)
+// CORS
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
@@ -42,7 +42,7 @@ func writeJSON(w http.ResponseWriter, code int, v any) {
 	json.NewEncoder(w).Encode(v)
 }
 
-// /health с проверкой базы (подзадача 7)
+// /health с проверкой базы 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if db == nil {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
@@ -66,7 +66,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Подключение к PostgreSQL (подзадача 6)
+// Подключение к PostgreSQL
 func connectDB() {
 	url := os.Getenv("DATABASE_URL")
 	if url == "" {

@@ -1,14 +1,19 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// Логи: пишет в консоль каждый запрос (подзадача 8)
+var db *pgxpool.Pool // nil, пока база не подключена
+
+// Логи (подзадача 8)
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -17,7 +22,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// CORS: разрешает запросы от фронтенда (подзадача 9)
+// CORS (подзадача 9)
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
@@ -31,13 +36,64 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
+func writeJSON(w http.ResponseWriter, code int, v any) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(v)
+}
+
+// /health с проверкой базы (подзадача 7)
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	if db == nil {
+		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+	defer cancel()
+
+	if err := db.Ping(ctx); err != nil {
+		log.Printf("database ping failed: %v", err)
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{
+			"status":   "degraded",
+			"database": "unavailable",
+		})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{
+		"status":   "ok",
+		"database": "ok",
+	})
+}
+
+// Подключение к PostgreSQL (подзадача 6)
+func connectDB() {
+	url := os.Getenv("DATABASE_URL")
+	if url == "" {
+		log.Println("DATABASE_URL is not set, starting without database")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	pool, err := pgxpool.New(ctx, url)
+	if err != nil {
+		log.Printf("database config error: %v", err)
+		return
+	}
+	if err := pool.Ping(ctx); err != nil {
+		log.Printf("database connection failed: %v", err)
+	} else {
+		log.Println("database connection successful")
+	}
+	db = pool
 }
 
 func main() {
 	log.SetOutput(os.Stdout)
+
+	connectDB()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", healthHandler)

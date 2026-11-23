@@ -8,7 +8,6 @@ import (
 
 func main() {
 	log.SetOutput(os.Stdout)
-
 	connectDB()
 
 	mux := http.NewServeMux()

@@ -85,7 +85,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, map[string]string{"token": token})
 }
 
-// loginHandler: POST /auth/login
+// POST /auth/login
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if db == nil {
 		writeError(w, http.StatusServiceUnavailable, "db_unavailable", "database is not connected")
@@ -137,4 +137,9 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("user logged in: %s", userID)
 	writeJSON(w, http.StatusOK, map[string]string{"token": token})
+}
+
+// GET /me. Нужен, чтобы проверить, что токен работает
+func meHandler(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]string{"user_id": currentUserID(r)})
 }
